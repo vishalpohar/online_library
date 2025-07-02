@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/register.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Registration Container -->
+    <div class="register-container">
+        <div class="register-header">
+            <div class="logo">
+                <i class="fas fa-book-open logo-icon"></i>
+                <span class="logo-text">Libra</span>
+            </div>
+            <h2>Create Your Account</h2>
+            <p>Join our library community today</p>
+        </div>
+
+        <form id="register-form" method="POST" action="{{ url_for('register') }}" class="register-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-field">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Choose a username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-field">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Your email address" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <div class="input-field">
+                    <i class="fas fa-phone"></i>
+                    <input type="text" id="phone" name="phone" class="form-control" placeholder="Your phone number" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-field">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Create a password" required>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-meter" id="strength-meter"></div>
+                </div>
+                <div class="password-hint">Use at least 8 characters with a mix of letters, numbers & symbols</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <div class="input-field">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm your password" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="role">Account Type</label>
+                <select id="role" name="role" class="select-field">
+                    <option value="user">Regular User</option>
+                    <option value="admin">Administrator</option>
+                </select>
+            </div>
+
+            <button type="submit" class="register-btn">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+
+            <div class="login-link">
+                Already have an account? <a href="{{ url_for('login') }}">Sign in here</a>
+            </div>
+        </form>
+
+        <a href="{{ url_for('home') }}" class="back-to-home">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    <!-- Hidden message container -->
+    {% if message and category %}
+    <div id="popup-overlay" class="popup-overlay">
+    <div id="popup" class="popup" 
+       data-category="{{ category }}" 
+       data-message="{{ message }}">
+      <i id="popup-icon" class=""></i>
+      <span id="popup-text"></span>
+    </div>
+    </div>
+    {% endif %}
+
+    
+    <script>
+    // Password strength indicator
+    const passwordInput = document.getElementById('password');
+    const strengthMeter = document.getElementById('strength-meter');
+
+    passwordInput.addEventListener('input', function () {
+        const password = this.value;
+        let strength = 0;
+
+        // Check length
+        if (password.length >= 8) strength += 1;
+        if (password.length >= 12) strength += 1;
+
+        // Check for numbers
+        if (/\d/.test(password)) strength += 1;
+
+        // Check for special chars
+        if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength += 1;
+
+        // Check for uppercase and lowercase
+        if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 1;
+
+        // Update meter
+        const width = strength * 20;
+        strengthMeter.style.width = width + '%';
+
+        // Make meter green if strong enough (e.g., strength >= 4)
+        if (strength >= 4) {
+            strengthMeter.style.backgroundColor = 'var(--success-color)';
+        } else {
+            strengthMeter.style.backgroundColor = 'var(--error-color)';
+        }
+    });
+
+    // Popup functionality
+    window.onload = () => {
+        const popupOverlay = document.getElementById("popup-overlay");
+        const popup = document.getElementById("popup");
+        const popupText = document.getElementById("popup-text");
+        const popupIcon = document.getElementById("popup-icon");
+
+        const category = popup.getAttribute("data-category");
+        const message = popup.getAttribute("data-message");
+
+        if (message && category) {
+            popupText.textContent = message;
+            popup.classList.add(category);
+            popupOverlay.style.display = "flex";
+
+            if (category === "success") {
+                popupIcon.className = "fas fa-check-circle";
+            } else if (category === "error") {
+                popupIcon.className = "fas fa-times-circle";
+            }
+
+            setTimeout(() => {
+                popupOverlay.style.display = "none";
+                if (category === "success") {
+                    window.location.href = "/login";
+                }
+            }, 3000);
+        }
+    };
+
+    // Form validation
+    const form = document.getElementById('register-form');
+    form.addEventListener('submit', function (e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Passwords do not match!');
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ main_book['title'] }} | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/on_click.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-brand">
+            <i class="fas fa-book-open logo-icon"></i>
+            <span class="logo-text">Libra</span>
+        </div>
+        <nav class="nav-links">
+            <a href="{{ url_for('user_dashboard') }}" class="nav-link">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ url_for('about') }}" class="nav-link">
+                <i class="fas fa-info-circle"></i> About
+            </a>
+            <a href="" class="nav-link">
+                <i class="fas fa-envelope"></i> Contact
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="book-detail">
+            <div class="book-image">
+                <img src="{{ url_for('static', filename='images/' ~ main_book['image']) }}" alt="{{ main_book['title'] }}" class="book-cover">
+            </div>
+            <div class="book-info">
+                <h1 class="book-title">{{ main_book['title'] }}</h1>
+                <p class="book-author">by {{ main_book['author'] }}</p>
+                
+                <div class="book-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Category: {{ main_book['category'] }}</span>
+                    </div>
+                </div>
+                
+                <div class="book-description">
+                    <h3>Description</h3>
+                    <p>{{ main_book['description'] }}</p>
+                </div>
+                
+                <div class="action-btns">
+                    <a href="{{ url_for('read_book', book_id=main_book['_id']) }}" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-book-reader"></i> Read Book
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="related-books">
+            <h2 class="section-title">More {{ main_book['category'] }} Books</h2>
+            
+            {% if other_books %}
+            <div class="books-grid">
+                {% for book in other_books %}
+                <a href="{{ url_for('on_click', book_id=book._id)}}" class="book-card">
+                    <img src="{{ url_for('static', filename='images/' ~ book['image']) }}" alt="{{ book['title'] }}" class="card-cover">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ book['title'] }}</h3>
+                        <p class="card-author">by {{ book['author'] }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <p>No other books available in this category.</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">&copy; 2024 My Library. All rights reserved. | 
+            <a href="" class="footer-link">Privacy Policy</a>
+        </p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.title }} | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/read_book.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-brand">
+            <i class="fas fa-book-open logo-icon"></i>
+            <span class="header-title">Reading: {{ book.title }}</span>
+        </div>
+        <a href="{{ url_for('on_click', book_id=book._id) }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back to Book
+        </a>
+    </header>
+
+    <div class="reader-container">
+        <div class="reader-header">
+            <h1 class="book-title">{{ book.title }}</h1>
+            <p class="book-author">by {{ book.author }}</p>
+        </div>
+
+        <div class="reader-content">
+            {% if file_type == 'pdf' %}
+                <iframe src="{{ file_url }}" class="pdf-viewer"></iframe>
+            {% elif file_type == 'docx' %}
+                <div class="text-content">
+                    {{ content | safe }}
+                </div>
+            {% elif file_type == 'epub' %}
+                <div class="text-content">
+                    {{ content | safe }}
+                </div>
+            {% elif file_type == 'text' %}
+                <div class="text-content">
+                    <pre>{{ content }}</pre>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">&copy; 2024 Library Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

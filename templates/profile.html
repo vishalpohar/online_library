@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="logo-container">
+            <i class="fas fa-book-open logo-icon"></i>
+            <span class="logo-text">Libra</span>
+        </div>
+        
+        <div class="user-controls">
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">2</span>
+            </div>
+            <div class="user-profile" onclick="toggleDropdown()">
+                <div class="user-avatar">{{ user.username[0]|upper }}</div>
+                <span class="user-name">{{ user.username }}</span>
+                <i id="arrow-icon" class="fas fa-chevron-down"></i>
+            </div>
+
+            <div id="profile-dropdown" class="profile-dropdown">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> Profile</a>
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <ul class="nav-list">
+            {% if user['role'] == 'admin' %}
+            <li class="nav-item">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a href="{{ url_for('user_dashboard') }}" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            </li>
+            {% endif %}
+            {% if user['role'] == 'admin' %}
+            {% elif user['role'] == 'user' %}
+            <!--<li class="nav-item">
+                <a href="" class="nav-link"><i class="fas fa-book"></i> My Books</a>
+            </li>-->
+            <li class="nav-item">
+                <a href="{{ url_for('about') }}" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <div class="profile-header">
+            <h1 class="profile-title"><i class="fas fa-user-circle"></i> My Profile</h1>
+            <button class="edit-profile-btn" id="editProfileBtn">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+
+        <div class="profile-container">
+            <aside class="profile-sidebar">
+                <div class="profile-avatar">{{ user.username[0]|upper }}</div>
+                <h2 class="profile-name">{{ user.username }}</h2>
+                <span class="profile-role">{{ user.role|capitalize }}</span>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Books Read</span>
+                        <span class="stat-value">12</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Currently Reading</span>
+                        <span class="stat-value">3</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Wishlist</span>
+                        <span id="wishlist-count" class="stat-value">0</span>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="profile-content">
+                <section class="profile-section">
+                    <h2 class="section-title"><i class="fas fa-id-card"></i> Personal Information</h2>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-label">Username</div>
+                            <div class="info-value">{{ user.username }}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value">{{ user.phone_number or 'Not provided' }}</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Account Type</div>
+                            <div class="info-value">{{ user.role|capitalize }}</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-section">
+                    <h2 class="section-title"><i class="fas fa-book"></i> Reading Preferences</h2>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-label">Favorite Genre</div>
+                            <div class="info-value">Science Fiction</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Reading Goal</div>
+                            <div class="info-value">30 books this year</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Preferred Format</div>
+                            <div class="info-value">eBooks & Physical</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- Enhanced Edit Profile Modal -->
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal-form">
+            <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+            <form id="editProfileForm" method="POST" action="{{ url_for('update_profile') }}">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="edit-username" name="username" value="{{ user.username }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="edit-email" name="email" value="{{ user.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="edit-phone" name="phone_number" value="{{ user.phone_number }}">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="modal-btn cancel-btn" id="cancelEditBtn">
+                        Cancel
+                    </button>
+                    <button type="submit" class="modal-btn save-btn" id="saveProfileBtn">
+                        <span class="btn-text">Save Changes</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="footer-links">
+            <a href="#" class="footer-link">About Us</a>
+            <a href="#" class="footer-link">Contact</a>
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+        </div>
+        <p class="copyright">&copy; 2024 Libra Library Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Modal functionality
+        const editBtn = document.getElementById('editProfileBtn');
+        const modalOverlay = document.getElementById('editProfileModal');
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        const saveBtn = document.getElementById('saveProfileBtn');
+        const editForm = document.getElementById('editProfileForm');
+
+        // Show modal
+        editBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+
+        // Hide modal
+        cancelBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        // Close modal when clicking outside
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        });
+
+        // Form submission
+        editForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Stop default form submission
+            
+            // Show loading animation
+            saveBtn.classList.add('btn-loading');
+            saveBtn.disabled = true;
+
+            // Wait before submitting
+            setTimeout(() => {
+                editForm.submit(); // Now submit the form
+            }, 1500);
+        });
+
+        // Existing dropdown and other functionality remains the same
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profile-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            dropdown.classList.toggle('show');
+
+            if (dropdown.classList.contains('show')) {
+                arrow.classList.remove('fa-chevron-down');
+                arrow.classList.add('fa-chevron-up');
+            } else {
+                arrow.classList.remove('fa-chevron-up');
+                arrow.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Click outside to close dropdown
+        document.addEventListener('click', function(event) {
+            const profile = document.querySelector('.user-profile');
+            const dropdown = document.getElementById('profile-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            if (!profile.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+                arrow.classList.remove('fa-chevron-up');
+                arrow.classList.add('fa-chevron-down');
+            }
+        });
+
+        // Dynamically update wishlist count
+        document.addEventListener("DOMContentLoaded", function () {
+            const wishlist = JSON.parse(localStorage.getItem("wishlistBooks") || "[]");
+            const wishlistCount = document.getElementById("wishlist-count");
+            if (wishlistCount) {
+                wishlistCount.textContent = wishlist.length;
+            }
+        });
+    </script>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profile-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            dropdown.classList.toggle('show');
+
+            if (dropdown.classList.contains('show')) {
+                arrow.classList.remove('fa-chevron-down');
+                arrow.classList.add('fa-chevron-up');
+            } else {
+                arrow.classList.remove('fa-chevron-up');
+                arrow.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Click outside to close
+        document.addEventListener('click', function(event) {
+            const profile = document.querySelector('.user-profile');
+            const dropdown = document.getElementById('profile-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            if (!profile.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+                arrow.classList.remove('fa-chevron-up');
+                arrow.classList.add('fa-chevron-down');
+            }
+        });
+
+        // Dynamically update wishlist count
+        document.addEventListener("DOMContentLoaded", function () {
+            const wishlist = JSON.parse(localStorage.getItem("wishlistBooks") || "[]");
+            const wishlistCount = document.getElementById("wishlist-count");
+            if (wishlistCount) {
+                wishlistCount.textContent = wishlist.length;
+            }
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/verify_otp.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- OTP Container -->
+    <div class="otp-container">
+        <div class="otp-header">
+            <div class="logo">
+                <i class="fas fa-book-open logo-icon"></i>
+                <span class="logo-text">Libra</span>
+            </div>
+            <h2>Verify Your Email</h2>
+            <p>Enter the 6-digit code sent to your email</p>
+        </div>
+
+        <form method="POST" class="otp-form">
+            <div class="otp-inputs">
+                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+                <input type="text" class="otp-input" maxlength="1" pattern="[0-9]">
+            </div>
+            <input type="hidden" name="otp" id="full-otp">
+
+            <button type="submit" class="otp-btn">
+                <i class="fas fa-check-circle"></i> Verify Code
+            </button>
+
+            <div class="resend-link">
+                Didn't receive a code? <a href="{{ url_for('resend_otp') }}">Resend code</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Hidden message container -->
+    <div id="popup" class="popup" 
+         data-category="{{ category }}" 
+         data-message="{{ message }}">
+    </div>
+
+    <script>
+        // OTP input functionality
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const fullOtpInput = document.getElementById('full-otp');
+        
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1) {
+                    if (index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                }
+                
+                updateFullOtp();
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value.length === 0) {
+                    if (index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                }
+                
+                updateFullOtp();
+            });
+        });
+        
+        function updateFullOtp() {
+            let fullOtp = '';
+            otpInputs.forEach(input => {
+                fullOtp += input.value;
+            });
+            fullOtpInput.value = fullOtp;
+        }
+
+        // Popup functionality
+        window.onload = () => {
+            const popup = document.getElementById("popup");
+            const category = popup.getAttribute("data-category");
+            const message = popup.getAttribute("data-message");
+
+            if (message && category) {
+                popup.textContent = message;
+                popup.classList.add(category);
+                popup.style.display = "block";
+
+                setTimeout(() => {
+                    popup.style.display = "none";
+                    if (category === "otp_verified") {
+                        window.location.href = "/reset_password";
+                    }
+                    else if (category === "crucial_error"){
+                        window.location.href = "/forgot_password";
+                    }
+                }, 3000);
+            }
+        };
+    </script>
+</body>
+</html>

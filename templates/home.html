@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="video-background">
+        <video class="background-video" autoplay muted loop playsinline>
+            <source src="{{ url_for('static', filename='videos/animated.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-book-open logo-icon"></i>
+                <span class="logo-text">Libra</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="hero">
+                <h1 class="hero-title">Discover Your Next <span class="highlight">Favorite Book</span></h1>
+                <p class="hero-subtitle">Explore our vast collection and manage your reading journey with our intuitive library system.</p>
+                
+                <div class="cta-buttons">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">
+                        <span>Login</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="{{ url_for('register') }}" class="btn btn-secondary">
+                        <span>Register</span>
+                        <i class="fas fa-user-plus"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Extensive Catalog</h3>
+                    <p>Discover thousands of titles across all genres and subjects.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>24/7 Access</h3>
+                    <p>Your digital library available anytime, anywhere.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <h3>Personalized</h3>
+                    <p>Save favorites and get tailored recommendations.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="{{ url_for('about') }}">About</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Terms</a>
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+                <p class="copyright">&copy; 2024 Library Management System. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

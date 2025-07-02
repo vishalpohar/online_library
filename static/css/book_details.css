@@ -1,0 +1,154 @@
+
+    :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3f37c9;
+        --accent-color: #4cc9f0;
+        --light-color: #f8f9fa;
+        --dark-color: #212529;
+        --gray-color: #6c757d;
+        --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+        color: var(--dark-color);
+        line-height: 1.6;
+    }
+    /* Navigation */
+    nav {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .nav-brand {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+    .nav-brand i {
+        margin-right: 10px;
+    }
+    .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+    .book-detail-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        padding: 2rem;
+    }
+    .book-header {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    .book-cover {
+        width: 250px;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .book-info {
+        flex: 1;
+    }
+    .book-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--dark-color);
+        margin-bottom: 0.5rem;
+    }
+    .book-author {
+        font-size: 1.2rem;
+        color: var(--gray-color);
+        margin-bottom: 1.5rem;
+    }
+    .book-meta {
+        margin-bottom: 1.5rem;
+    }
+    .meta-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .meta-item i {
+        margin-right: 10px;
+        color: var(--primary-color);
+        width: 20px;
+        text-align: center;
+    }
+    .book-description {
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+    .action-btns {
+        display: flex;
+        gap: 1rem;
+    }
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+    .btn-outline {
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+    }
+    .btn-outline:hover {
+        background-color: rgba(67, 97, 238, 0.1);
+    }
+    .btn i {
+        margin-right: 8px;
+    }
+    /* Footer */
+    footer {
+        background: var(--dark-color);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+        margin-top: 3rem;
+    }
+    .footer-text {
+        font-size: 0.9rem;
+    }
+    @media (max-width: 768px) {
+        .book-header {
+            flex-direction: column;
+        }
+        
+        .book-cover {
+            width: 100%;
+            height: auto;
+            max-height: 400px;
+        }
+    }

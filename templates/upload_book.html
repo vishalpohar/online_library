@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Book | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload_book.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav>
+        <a href="{{ url_for('admin_dashboard') }}" class="nav-brand">
+            <i class="fas fa-book-open"></i> Libra  Admin
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="upload-card">
+            <div class="page-header">
+                <h1 class="page-title">Upload New Book</h1>
+                <p class="page-subtitle">Fill in the details to add a new book to the library</p>
+            </div>
+
+            <form id="uploadForm" action="{{ url_for('upload_book') }}" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="book_name" class="form-label">Book Title</label>
+                    <input type="text" id="book_name" name="book_name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="author_name" class="form-label">Author</label>
+                    <input type="text" id="author_name" name="author_name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" name="category" class="form-control" required>
+                        <option value="">Select Category</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-fiction">Non-fiction</option>
+                        <option value="Science">Science</option>
+                        <option value="Biography">Biography</option>
+                        <option value="History">History</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Book File (.epub, .docx, .txt)</label>
+                    <div class="file-upload">
+                        <div class="file-upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i> Choose Book File
+                        </div>
+                        <input type="file" id="book_file" name="book_file" class="file-upload-input" accept=".epub,.docx,.txt" required>
+                    </div>
+                    <div id="bookFileName" class="file-name">No file chosen</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Book Cover Image (.jpg, .png)</label>
+                    <div class="file-upload">
+                        <div class="file-upload-btn">
+                            <i class="fas fa-cloud-upload-alt"></i> Choose Cover Image
+                        </div>
+                        <input type="file" id="book_image" name="book_image" class="file-upload-input" accept=".jpg,.png" required>
+                    </div>
+                    <div id="imageFileName" class="file-name">No file chosen</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-upload"></i> Upload Book
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="modal-title">Success!</h3>
+            <p class="modal-message">Book uploaded successfully</p>
+            <button id="closeModal" class="btn btn-close">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">&copy; 2024 Library Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById("successModal");
+            const closeModalButton = document.getElementById("closeModal");
+            const bookFileInput = document.getElementById("book_file");
+            const bookFileName = document.getElementById("bookFileName");
+            const imageFileInput = document.getElementById("book_image");
+            const imageFileName = document.getElementById("imageFileName");
+
+            // Handle file input changes
+            bookFileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    bookFileName.textContent = this.files[0].name;
+                } else {
+                    bookFileName.textContent = 'No file chosen';
+                }
+            });
+
+            imageFileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    imageFileName.textContent = this.files[0].name;
+                } else {
+                    imageFileName.textContent = 'No file chosen';
+                }
+            });
+
+            // Handle form submission
+            document.getElementById("uploadForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                submitBtn.disabled = true;
+
+                // Simulate upload process
+                setTimeout(() => {
+                    // Submit the form after showing the modal
+                    this.submit();
+                    
+                    // Show success modal
+                    modal.classList.add('show');
+                    
+                    // Reset button
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                }, 1500);
+            });
+
+            // Close modal
+            closeModalButton.addEventListener('click', function() {
+                modal.classList.remove('show');
+            });
+
+            // Close when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

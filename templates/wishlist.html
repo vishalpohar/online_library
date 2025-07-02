@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/wishlist.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="logo-container">
+            <i class="fas fa-book-open logo-icon"></i>
+            <span class="logo-text">Libra</span>
+        </div>
+        
+        <div class="user-controls">
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="user-profile" onclick="toggleDropdown()">
+                <div class="user-avatar">{{ user.username[0]|upper }}</div>
+                <span class="user-name">{{ user.username }}</span>
+                <i id="arrow-icon" class="fas fa-chevron-down"></i>
+            </div>
+
+            <div id="profile-dropdown" class="profile-dropdown">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> Profile</a>
+                <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="{{ url_for('user_dashboard') }}" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+            </li>
+            <!--<li class="nav-item">
+                <a href="" class="nav-link"><i class="fas fa-book"></i> My Books</a>
+            </li>-->
+            <li class="nav-item">
+                <a href="{{ url_for('about') }}" class="nav-link"><i class="fas fa-info-circle"></i> About</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('wishlist') }}" class="nav-link active"><i class="fas fa-heart"></i> Wishlist</a>
+            </li>
+
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Welcome Banner -->
+        <section class="welcome-banner">
+            <div class="welcome-text">
+                <h2>Welcome back, {{ user.username }}</h2>
+                <p>Continue your reading journey with our latest collection. You have 3 books due in 5 days.</p>
+            </div>
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Books Read</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Currently Reading</div>
+                </div>
+                <div class="stat-card">
+                    <div id="wishlist-count" class="stat-value">0</div>
+                    <div class="stat-label">Wishlist</div>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h2 class="section-title"><i class="fas fa-heart"></i> My Wishlist</h2>
+            <div class="book-grid" id="wishlist-books">
+            <!-- Wishlist books will be injected here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="footer-links">
+            <a href="#" class="footer-link">About Us</a>
+            <a href="#" class="footer-link">Contact</a>
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+        </div>
+        <p class="copyright">&copy; 2024 Libra Library Management System. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('profile-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            dropdown.classList.toggle('show');
+
+            if (dropdown.classList.contains('show')) {
+                arrow.classList.remove('fa-chevron-down');
+                arrow.classList.add('fa-chevron-up');
+            } else {
+                arrow.classList.remove('fa-chevron-up');
+                arrow.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Click outside to close
+        document.addEventListener('click', function(event) {
+            const profile = document.querySelector('.user-profile');
+            const dropdown = document.getElementById('profile-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            if (!profile.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+                arrow.classList.remove('fa-chevron-up');
+                arrow.classList.add('fa-chevron-down');
+            }
+        });
+    </script>
+
+    <script>
+        // Load wishlist books from localStorage
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.getElementById('wishlist-books');
+            const wishlist = JSON.parse(localStorage.getItem("wishlistBooks") || "[]");
+
+            if (wishlist.length === 0) {
+                container.innerHTML = `<div class="no-books">
+                    <i class="fas fa-heart-broken" style="font-size: 2rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>No books in your wishlist yet.</p>
+                </div>`;
+                return;
+            }
+
+            wishlist.forEach(book => {
+                const bookHTML = `
+                    <div class="book-card">
+                        <a href="/on_click/${book.id}">
+                            <img src="${book.image}" alt="${book.title}" class="book-cover">
+                        </a>
+                        <div class="book-details">
+                            <h3 class="book-title">${book.title}</h3>
+                            <p class="book-author">by ${book.author}</p>
+                            <div class="book-meta">
+                                <span class="book-category">${book.category}</span>
+                                <div class="book-actions">
+                                    <button class="action-btn wishlist-btn active" onclick="toggleWishlist(this)"
+                                        data-id="${book.id}"
+                                        data-title="${book.title}"
+                                        data-author="${book.author}"
+                                        data-category="${book.category}"
+                                        data-image="${book.image}"
+                                        title="Remove from wishlist">
+                                        <i class="fas fa-heart" style="color: red;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += bookHTML;
+            });
+        });
+
+
+        // Dynamically update wishlist count
+        document.addEventListener("DOMContentLoaded", function () {
+            const wishlist = JSON.parse(localStorage.getItem("wishlistBooks") || "[]");
+            const wishlistCount = document.getElementById("wishlist-count");
+            if (wishlistCount) {
+                wishlistCount.textContent = wishlist.length;
+            }
+        });
+    </script>
+
+    <script>
+        function toggleWishlist(button) {
+            const icon = button.querySelector('i');
+            const book = {
+                id: button.dataset.id,
+                title: button.dataset.title,
+                author: button.dataset.author,
+                category: button.dataset.category,
+                image: button.dataset.image
+            };
+
+            let wishlist = JSON.parse(localStorage.getItem("wishlistBooks") || "[]");
+
+            const index = wishlist.findIndex(item => item.id === book.id);
+            if (index === -1) {
+                // Add to wishlist
+                wishlist.push(book);
+                button.classList.add("active");
+                icon.style.color = 'red';
+            } else {
+                // Remove from wishlist
+                wishlist.splice(index, 1);
+                button.classList.remove("active");
+                icon.style.color = '';
+            }
+
+            localStorage.setItem("wishlistBooks", JSON.stringify(wishlist));
+        }
+
+        // On load, highlight wishlist items
+        document.addEventListener("DOMContentLoaded", () => {
+            const wishlist = JSON.parse(localStorage.getItem("wishlistBooks") || "[]");
+            document.querySelectorAll(".wishlist-btn").forEach(btn => {
+                const id = btn.dataset.id;
+                if (wishlist.find(b => b.id === id)) {
+                    btn.classList.add("active");
+                    btn.querySelector("i").style.color = 'red';
+                }
+            });
+        });
+
+
+        // Dynamically update wishlist count
+        document.addEventListener("DOMContentLoaded", function () {
+            const wishlist = JSON.parse(localStorage.getItem("wishlistBooks") || "[]");
+            const wishlistCount = document.getElementById("wishlist-count");
+            if (wishlistCount) {
+                wishlistCount.textContent = wishlist.length;
+            }
+        });
+    </script>
+</body>
+</html>

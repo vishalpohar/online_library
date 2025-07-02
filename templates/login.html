@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">
+                <i class="fas fa-book-open logo-icon"></i>
+                <span class="logo-text">Libra</span>
+            </div>
+            <h2>Welcome Back</h2>
+            <p>Sign in to access your library account</p>
+        </div>
+
+        <form id="login-form" method="POST" action="{{ url_for('login') }}" class="login-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-field">
+                    <i class="fas fa-user"></i>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter your Email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-field">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <a href="{{ url_for('forgot_password') }}" class="forgot-password">Forgot Password?</a>
+            </div>
+
+            <div class="divider">or continue with</div>
+
+            <div class="social-login">
+                <a href="#" class="social-btn">
+                    <i class="fab fa-google"></i>
+                </a>
+                <a href="#" class="social-btn">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-btn">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+
+            <div class="register-link">
+                Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+            </div>
+        </form>
+
+        <a href="{{ url_for('home') }}" class="back-to-home">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+
+    <!-- Hidden message container -->
+  <div id="popup" class="popup" 
+       data-category="{{ category }}" 
+       data-message="{{ message }}">
+  </div>
+
+  <script>
+    window.onload = () => {
+      const popup = document.getElementById("popup");
+      const category = popup.getAttribute("data-category");
+      const message = popup.getAttribute("data-message");
+
+      if (message) {
+        popup.textContent = message;
+        popup.classList.add(category);
+        popup.style.display = "block";
+
+        setTimeout(() => {
+          popup.style.display = "none";
+        }, 3000);
+      }
+    };
+  </script>
+</body>
+</html>

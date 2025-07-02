@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book['title'] }} | Libra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/book_details.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav>
+        <a href="{{ url_for('manage_book') }}" class="nav-brand">
+            <i class="fas fa-book-open"></i> Library
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="book-detail-card">
+            <div class="book-header">
+                <img src="{{ url_for('static', filename='images/' ~ book['image']) }}" alt="{{ book['title'] }}" class="book-cover">
+                <div class="book-info">
+                    <h1 class="book-title">{{ book['title'] }}</h1>
+                    <p class="book-author">by {{ book['author'] }}</p>
+                    
+                    <div class="book-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-bookmark"></i>
+                            <span>Category: {{ book['category'] }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="book-description">
+                        <h3>Description</h3>
+                        <p>{{ book['description'] }}</p>
+                    </div>
+                    
+                    <div class="action-btns">
+                        {% if user['role'] == 'admin' %}
+                        <a href="{{ url_for('read_book', book_id=book['_id']) }}" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-book-reader"></i> Read Book
+                        </a>
+                        
+                        <a href="{{ url_for('manage_book') }}" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i> Back to Books
+                        </a>
+                        {% elif user['role'] == 'user' %}
+                        <a href="{{ url_for('user_dashboard') }}" class="btn btn-outline">
+                            <i class="fas fa-arrow-left"></i> Back to Books
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p class="footer-text">&copy; 2024 Library Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>
